@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import * as BooksAPI from '../api/BooksAPI';
 import Home from './Home';
+import Search from './Search';
 import './App.css';
 
 const CURRENTLY_READING = 'currentlyReading';
@@ -61,11 +62,19 @@ class BooksApp extends Component {
         const { books } = this.state;
         const shelves = this.booksByShelf(books);
 
+        console.log(shelves)
+
         return (
             <div className="app">
                 <Route exact path='/' render={() => (
                     <Home
                         shelves={shelves}
+                        books={books}
+                        moveBookToShelf={this.moveBookToShelf}
+                    />
+                )}/>
+                <Route path="/search" render={() => (
+                    <Search
                         books={books}
                         moveBookToShelf={this.moveBookToShelf}
                     />
