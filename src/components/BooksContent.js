@@ -2,19 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const BooksContent = ({ books, moveBookToShelf }) => {
+    const handleImage = (book) => book && book.imageLinks ? book.imageLinks.thumbnail : '';
+
     return (
         <ol className="books-grid">
-            {books
-                .map((book) => (
+            {books.map((book) => (
                 <li key={book.id}>
                     <div className="book">
                         <div className="book-top">
-                            <div className="book-cover" style={{ backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
+                            <div className="book-cover" style={{ backgroundImage: `url(${handleImage(book)})` }}></div>
                             <div className="book-shelf-changer">
                             <select
-                                value={book.shelf ? book.shelf : 'none'}
+                                defaultValue={book.shelf ? book.shelf : 'none'}
                                 onChange={(event) => moveBookToShelf(book, event.target.value)}>
-                                <option value="none" disabled>Move to...</option>
+                                <option disabled>Move to...</option>
                                 <option value="currentlyReading">Currently Reading</option>
                                 <option value="wantToRead">Want to Read</option>
                                 <option value="read">Read</option>
@@ -27,7 +28,6 @@ const BooksContent = ({ books, moveBookToShelf }) => {
 
                         {/* INFO */}
                         <div className="book-title" style={{color: 'red'}}>{book.shelf ? book.shelf : 'NONE'}</div>
-
                     </div>
                 </li>
             ))}
