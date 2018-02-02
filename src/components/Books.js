@@ -1,6 +1,7 @@
 import React from 'react';
 import BooksContent from './BooksContent';
 import PropTypes from 'prop-types';
+import NoBooksAvailable from '../components/NoBooksAvailable';
 
 const Books = ({ title, books, moveBookToShelf }) => {
     return (
@@ -10,10 +11,12 @@ const Books = ({ title, books, moveBookToShelf }) => {
                 <div className="bookshelf">
                     <h2 className="bookshelf-title">{title}</h2>
                     <div className="bookshelf-books">
+                    {books && books.some((book) => book.id) ? (
                         <BooksContent
                             books={books}
                             moveBookToShelf={moveBookToShelf}
                         />
+                    ) : <NoBooksAvailable />}
                     </div>
                 </div>
             </div>

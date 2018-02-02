@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Books from './Books';
 import PropTypes from 'prop-types';
+import NoBooksAvailable from '../components/NoBooksAvailable';
 
 const Home = ({ shelves, books, moveBookToShelf }) => {
     return (
@@ -10,14 +11,14 @@ const Home = ({ shelves, books, moveBookToShelf }) => {
                 <h1>MyReads</h1>
             </div>
 
-            {shelves.map((shelf) => (
+            {shelves && shelves.length ? shelves.map((shelf) => (
                 <Books
                     key={shelf.title}
                     title={shelf.title}
                     books={shelf.books}
                     moveBookToShelf={moveBookToShelf}
                 />
-            ))}
+            )) : <NoBooksAvailable />}
 
             <div className="open-search">
                 <Link to="/search">Add a book</Link>
