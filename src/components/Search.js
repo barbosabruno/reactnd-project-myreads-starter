@@ -4,6 +4,9 @@ import * as BooksAPI from '../api/BooksAPI'
 import Books from './Books';
 import SEARCH_TERMS from '../SearchTerms';
 import PropTypes from 'prop-types';
+import IgnoreCase from '../helper/IgnoreCase';
+import { Debounce } from 'react-throttle';
+import Notes from '../components/Notes';
 
 class Search extends Component {
     static propTypes = {
@@ -12,8 +15,14 @@ class Search extends Component {
     }
 
     state = {
-        books: [],
-        query: ''
+        books: []
+    }
+
+    findTermByQuery = (query) => {
+        if ( !query ) return;
+
+        const terms = SEARCH_TERMS;
+        return terms && terms.some((term) => IgnoreCase(term, query));
     }
 
     // NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -22,15 +31,14 @@ class Search extends Component {
 
     // However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
     // you don't find a specific author or title. Every search is limited by search terms.
-    listBooksBySearchTerms = (event) => {
+    listBooksByTerms = (event) => {
         const query = event.target.value;
+        const existsTerm = this.findTermByQuery(query);
 
-        this.setState({ query });
-
-        const searchTerms = SEARCH_TERMS;
-
-        // it must have match to search
-        if ( !searchTerms.some((term) => term === query) ) return;
+        if ( !existsTerm ) {
+            this.setState({ books: [] });
+            return;
+        }
 
         BooksAPI.search(query)
         .then((result) => {
@@ -48,34 +56,35 @@ class Search extends Component {
 
                 this.setState({ books: result });
             }
-
-            console.log(this.state.books);
         });
     }
 
     render() {
         const { moveBookToShelf } = this.props;
-        const { books, query } = this.state;
+        const { books } = this.state;
 
         return (
             <div className="search-books">
                 <div className="search-books-bar">
                     <Link className="close-search" to="/">Close</Link>
                     <div className="search-books-input-wrapper">
+                    <Debounce time="200" handler="onChange">
                         <input
                             autoFocus
                             type="text"
                             placeholder="Search by title or author"
-                            value={query}
-                            onChange={this.listBooksBySearchTerms}
+                            onChange={(event) => this.listBooksByTerms(event)}
                         />
+                    </Debounce>
                     </div>
                 </div>
                 <div className="search-books-results">
+                {books && books.length ? (
                     <Books
                         books={books}
                         moveBookToShelf={moveBookToShelf}
                     />
+                ) : <Notes />}
                 </div>
             </div>
         );
