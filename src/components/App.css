@@ -177,3 +177,13 @@ body,
     text-align: center;
     font-size: 0.8em;
 }
+
+.no-books-available {
+    padding: 20px;
+    text-align: center;
+    color: #757575;
+}
+
+.notes {
+    padding: 20px;
+}
