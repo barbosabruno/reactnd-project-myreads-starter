@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import * as BooksAPI from '../api/BooksAPI'
 import Books from './Books';
-import SEARCH_TERMS from '../SearchTerms';
 import PropTypes from 'prop-types';
-import IgnoreCase from '../helper/IgnoreCase';
 import { Debounce } from 'react-throttle';
 import Notes from '../components/Notes';
 
@@ -18,13 +16,6 @@ class Search extends Component {
         books: []
     }
 
-    findTermByQuery = (query) => {
-        if ( !query ) return;
-
-        const terms = SEARCH_TERMS;
-        return terms && terms.some((term) => IgnoreCase(term, query));
-    }
-
     // NOTES: The search from BooksAPI is limited to a particular set of search terms.
     // You can find these search terms here:
     // https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
@@ -33,9 +24,8 @@ class Search extends Component {
     // you don't find a specific author or title. Every search is limited by search terms.
     listBooksByTerms = (event) => {
         const query = event.target.value;
-        const existsTerm = this.findTermByQuery(query);
 
-        if ( !existsTerm ) {
+        if ( !query ) {
             this.setState({ books: [] });
             return;
         }
@@ -46,13 +36,10 @@ class Search extends Component {
             if ( result && result.length ) {
                 const { books } = this.props;
 
-                result.filter((res) => {
-                    return books.forEach((book) => {
-                        if ( res.id === book.id ) {
-                            res.shelf = book.shelf;
-                        }
-                    });
-                });
+                result.map((res) =>
+                    books.find((book) => book.id === res.id
+                        ? res.shelf = book.shelf
+                        : null));
 
                 this.setState({ books: result });
             }
